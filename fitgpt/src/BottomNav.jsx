@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faDumbbell, faAppleWhole, faUser } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 
-
 const NavWrapper = styled.nav`
   display: flex;
   justify-content: space-around;
@@ -16,6 +15,7 @@ const NavWrapper = styled.nav`
   position: fixed;
   bottom: 0;
   width: 100%;
+  color: rgba(128, 128, 128, 0.623);
   max-width: 400px;
   margin: auto;
 `;

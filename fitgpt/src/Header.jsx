@@ -1,9 +1,9 @@
 // Header.jsx
-import React, { useState } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -12,7 +12,11 @@ const HeaderWrapper = styled.header`
   padding: 1rem;
   background-color: #3f51b5;
   color: white;
-  position: relative;
+`;
+
+const BackButton = styled.div`
+  font-size: 1.5rem;
+  cursor: pointer;
 `;
 
 const Title = styled.h1`
@@ -20,57 +24,37 @@ const Title = styled.h1`
   margin: 0;
 `;
 
-const MenuIcon = styled.div`
+const CartIcon = styled.div`
   font-size: 1.5rem;
   cursor: pointer;
 `;
 
-const Sidebar = styled.div`
-  position: fixed;
-  top: 0;
-  left: ${({ isOpen }) => (isOpen ? "0" : "-100%")};
-  width: 70%;
-  height: 100%;
-  background-color: #ffffff;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-  padding-top: 2rem;
-  transition: left 0.3s;
-  z-index: 1000;
-`;
-
-const SidebarLink = styled.a`
-  display: block;
-  padding: 1rem;
-  color: #3f51b5;
-  text-decoration: none;
-  font-weight: bold;
-  &:hover {
-    background-color: #f0f0f0;
-  }
-`;
-
 function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const locationNow = useLocation();
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("email");
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+  const goBack = () => navigate(-1);
+  const handleConnectCart = () => {
+    navigate(userId ? "/cart" : "/login");
   };
 
   return (
     <HeaderWrapper>
-      <MenuIcon onClick={toggleSidebar}>
-        <FontAwesomeIcon icon={faBars} />
-      </MenuIcon>
-      <Title>HealthCare</Title>
-
-      {/* 사이드바 메뉴 */}
-      <Sidebar isOpen={isOpen}>
-        <SidebarLink href="/">Home</SidebarLink>
-        <SidebarLink href="/workouts">Workouts</SidebarLink>
-        <SidebarLink href="/nutrition">Nutrition</SidebarLink>
-        <SidebarLink href="/report">Report</SidebarLink>
-        <SidebarLink href="/profile">Profile</SidebarLink>
-      </Sidebar>
+      <BackButton onClick={goBack}>
+        <FontAwesomeIcon icon={faAngleLeft} />
+      </BackButton>
+      <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+        <Title>HealthCare</Title>
+      </Link>
+      <CartIcon onClick={handleConnectCart}>
+        <FontAwesomeIcon
+          icon={faCartShopping}
+          className={
+            locationNow.pathname === "/cart" ? "active-cart-icon" : "cart-icon"
+          }
+        />
+      </CartIcon>
     </HeaderWrapper>
   );
 }
