@@ -1,42 +1,39 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import { FaBars } from 'react-icons/fa'; // 햄버거 아이콘
-import './index.css'; // CSS 스타일을 포함한 파일
+// Main.jsx
+import React from "react";
+import Header from "./Header";
+import BottomNav from "./BottomNav";
+import styled from "styled-components";
 
-function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+const MainContent = styled.main`
+  padding: 1rem;
+  text-align: center;
+  margin-top: 4rem;
+  margin-bottom: 6vh;
+`;
 
+const WelcomeText = styled.h2`
+  font-size: 1.5rem;
+  color: #3f51b5;
+`;
+
+const Description = styled.p`
+  font-size: 1rem;
+  color: #333;
+  margin: 1rem 0;
+`;
+
+function Main() {
   return (
-    <div className="app">
-      {/* 상단 햄버거 메뉴바 */}
-      <header className="app-header">
-        <FaBars className="menu-icon" onClick={toggleSidebar} />
-        <h1>FITGPT</h1>
-      </header>
-
-      {/* 사이드바 */}
-      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <p onClick={() => setSidebarOpen(false)}>기능 1: 헬스 기록</p>
-        <p onClick={() => setSidebarOpen(false)}>기능 2: 운동 루틴</p>
-        <p onClick={() => setSidebarOpen(false)}>기능 3: 영양 관리</p>
-      </div>
-
-      {/* 메인 콘텐츠: 원형 버튼들 */}
-      <main className="main-content">
-        <button className="circle-button large">자취생 레시피</button>
-        <button className="circle-button medium">중고거래 사이트</button>
-        <button className="circle-button small">학과 익명 커뮤니티</button>
-      </main>
-    </div>
+    <>
+      <Header />
+      <MainContent>
+        <WelcomeText>Welcome to HealthCare App</WelcomeText>
+        <Description>Track your health, monitor workouts, and manage your nutrition.</Description>
+      </MainContent>
+      <BottomNav />
+    </>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+export default Main;
