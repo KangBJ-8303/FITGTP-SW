@@ -4,8 +4,8 @@ import Calendar from './Calendar';
 import Main from './Main';
 import Chat from "./Chat";
 import Recommend from "./Recommend";
-import Siginin from "./Signin";
-import Siginup from "./Signup";
+import Signin from "./Signin";
+import Signup from "./Signup";
 
 function App() {
   return (
@@ -16,8 +16,8 @@ function App() {
           <Route path="/Write" element={<Calendar />} />
           <Route path="/Chat" element={<Chat />} />
           <Route path="/Recommend" element={<Recommend />} />
-          <Route path="/signin" element={<Siginin />} />
-          <Route path="/signup" element={<Siginup />} />
+          <Route path="/Siginin" element={<Signin />} />
+          <Route path="/Siginup" element={<Signup />} />
         </Routes>
       </BrowserRouter>
     </div>
