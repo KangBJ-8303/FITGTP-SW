@@ -103,7 +103,7 @@ function Chat() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
+          placeholder="이렇게 말해보세요: 하체운동 어떤 게 좋아?"
         />
         <SendButton onClick={handleSend}>Send</SendButton>
       </InputArea>
