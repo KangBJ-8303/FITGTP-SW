@@ -1,4 +1,4 @@
-// App.js
+// App.js 수정안
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Calendar from './Calendar';
@@ -7,8 +7,8 @@ import Chat from "./Chat";
 import Recommend from "./Recommend";
 import Signin from "./Signin";
 import Signup from "./Signup";
-import Header from "./Header"; // Header 컴포넌트 추가
-import BottomNav from "./BottomNav"; // BottomNav 컴포넌트 추가
+import Header from "./Header";
+import BottomNav from "./BottomNav";
 import styled from "styled-components";
 
 const AppContainer = styled.div`
@@ -19,7 +19,9 @@ const AppContainer = styled.div`
 
 const ContentWrapper = styled.div`
   flex: 1;
-  overflow-y: auto; /* 스크롤 가능 */
+  overflow-y: auto;
+  padding-top: 60px; /* 헤더 공간 확보 */
+  padding-bottom: 60px; /* 하단 네비게이션 공간 확보 */
 `;
 
 function App() {

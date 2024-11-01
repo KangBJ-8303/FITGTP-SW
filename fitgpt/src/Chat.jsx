@@ -5,7 +5,7 @@ import styled from "styled-components";
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px); /* 상단바와 하단바 높이를 모두 제외 */
+  height: calc(100vh - 120px); /* 상단바와 하단바 높이를 제외 */
   max-width: 400px;
   margin: auto;
   background-color: #f7f7f7;
@@ -19,6 +19,7 @@ const MessageList = styled.div`
   flex-direction: column;
 `;
 
+// Message 컴포넌트를 여기에 선언
 const Message = styled.div`
   max-width: 60%;
   padding: 0.3rem 0.6rem;
@@ -38,7 +39,7 @@ const InputArea = styled.div`
   background-color: #ffffff;
   border-top: 1px solid #ddd;
   position: fixed;
-  bottom: 60px; /* 하단바 위에 위치하도록 설정 */
+  bottom: 60px; /* 하단바 위 */
   max-width: 400px;
   width: 100%;
 `;
