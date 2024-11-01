@@ -65,7 +65,7 @@ function Header() {
         <MenuIcon onClick={toggleSidebar}>
           <FontAwesomeIcon icon={faBars} />
         </MenuIcon>
-        <Title>FITGPT</Title>
+        <Title>HealthCare</Title>
       </HeaderWrapper>
 
       <Sidebar isOpen={isSidebarOpen}>

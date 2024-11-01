@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome, faCalendarAlt, faComments, faStar, faUser } from "@fortawesome/free-solid-svg-icons"; // 사용자 아이콘 추가
+import { faHome, faCalendarAlt, faComments, faStar, faUser } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 
 const NavWrapper = styled.nav`
@@ -43,8 +43,8 @@ const BottomNav = () => {
       <NavLink to="/Recommend" className={location.pathname === "/Recommend" ? "active" : ""}>
         <FontAwesomeIcon icon={faStar} />
       </NavLink>
-      <NavLink to="/Profile" className={location.pathname === "/Profile" ? "active" : ""}> {/* 프로필 페이지 링크 추가 */}
-        <FontAwesomeIcon icon={faUser} /> {/* 프로필 아이콘 */}
+      <NavLink to="/Profile" className={location.pathname === "/Profile" ? "active" : ""}>
+        <FontAwesomeIcon icon={faUser} />
       </NavLink>
     </NavWrapper>
   );

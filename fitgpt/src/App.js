@@ -1,4 +1,4 @@
-// App.js 수정안
+// App.js
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Calendar from './Calendar';
