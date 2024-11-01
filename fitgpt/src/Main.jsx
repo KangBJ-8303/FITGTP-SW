@@ -4,6 +4,7 @@ import Header from "./Header";
 import BottomNav from "./BottomNav";
 import styled from "styled-components";
 
+
 const MainContent = styled.main`
   padding: 1rem;
   text-align: center;

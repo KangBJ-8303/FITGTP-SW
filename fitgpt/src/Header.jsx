@@ -1,8 +1,8 @@
 // Header.jsx
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const HeaderWrapper = styled.header`
@@ -12,49 +12,28 @@ const HeaderWrapper = styled.header`
   padding: 1rem;
   background-color: #3f51b5;
   color: white;
-`;
-
-const BackButton = styled.div`
-  font-size: 1.5rem;
-  cursor: pointer;
+  position: fixed;
+  width: 100%;
+  top: 0;
 `;
 
 const Title = styled.h1`
   font-size: 1.2rem;
-  margin: 0;
+  margin: 0 auto;
 `;
 
-const CartIcon = styled.div`
+const MenuIcon = styled.div`
   font-size: 1.5rem;
   cursor: pointer;
 `;
 
 function Header() {
-  const locationNow = useLocation();
-  const navigate = useNavigate();
-  const userId = sessionStorage.getItem("email");
-
-  const goBack = () => navigate(-1);
-  const handleConnectCart = () => {
-    navigate(userId ? "/cart" : "/login");
-  };
-
   return (
     <HeaderWrapper>
-      <BackButton onClick={goBack}>
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </BackButton>
-      <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-        <Title>HealthCare</Title>
-      </Link>
-      <CartIcon onClick={handleConnectCart}>
-        <FontAwesomeIcon
-          icon={faCartShopping}
-          className={
-            locationNow.pathname === "/cart" ? "active-cart-icon" : "cart-icon"
-          }
-        />
-      </CartIcon>
+      <MenuIcon>
+        <FontAwesomeIcon icon={faBars} />
+      </MenuIcon>
+      <Title>HealthCare</Title>
     </HeaderWrapper>
   );
 }
