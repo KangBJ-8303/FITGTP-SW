@@ -1,91 +1,85 @@
+// Main.jsx
 import React from "react";
 import styled from "styled-components";
+import MainImage from "./asset/러닝.jpeg";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
+  justify-content: center;
   background-color: #ffffff;
   width: 100%;
-  max-width: 400px;
-  margin: auto;
+  max-width: 400px; /* 모바일 규격에 맞춘 너비 설정 */
+  height: 100%;
+  margin: 0 auto;
+  font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
+  overflow: hidden;
+`;
+
+const BackgroundImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(${MainImage});
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
+  z-index: 1;
+`;
+
+const TextContainer = styled.div`
+  z-index: 2;
   text-align: center;
-  font-family: 'Noto Sans KR', sans-serif; /* Noto Sans KR 폰트 적용 */
+  color: white;
+  padding: 1.5rem;
 `;
 
 const Title = styled.h1`
   font-size: 1.5rem;
+  font-weight: bold;
   margin-bottom: 0.5rem;
-  color: #333;
 `;
 
-const Description = styled.p`
+const Subtitle = styled.p`
   font-size: 1rem;
-  color: #666;
-  margin-bottom: 3rem;
-  line-height: 1.5;
-  padding: 0 1rem;
+  margin-bottom: 1rem;
 `;
 
-const CircleContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 5rem;
-`;
-
-const CircleButton = styled.div`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const RunButton = styled.button`
+  padding: 0.5rem 1.5rem;
   background-color: #004080;
   color: white;
-  border-radius: 50%;
+  border: none;
+  border-radius: 20px;
   font-size: 1rem;
-  text-align: center;
-  padding: 0.5rem;
   cursor: pointer;
-  line-height: 1.4; /* 텍스트 간격 조정 */
-  transition: transform 0.2s;
-
   &:hover {
-    transform: scale(1.05);
+    background-color: #003366;
   }
 `;
 
-const Main = () => {
+function Main() {
   const navigate = useNavigate();
+
+  const goToChat = () => {
+    navigate("/chat");
+  };
 
   return (
     <Container>
-      <Title>FITGPT - 당신의 맞춤형 피트니스 파트너</Title>
-      <Description>
-        FITGPT는 당신의 피트니스 여정을 더욱 스마트하게 도와드립니다.
-        AI가 함께하는 맞춤형 트레이닝, 상세한 운동 기록 관리, 
-        그리고 최적의 운동 추천 기능까지! 
-        <br/><br/>
-        건강한 라이프 스타일을 추구하는 모든 분들을 위한 필수 앱입니다.
-        오늘부터 FITGPT와 함께 목표를 달성해보세요!
-      </Description>
-      <CircleContainer>
-        <CircleButton size={150} onClick={() => navigate("/Write")}>
-          내가 운동했던 기록을 캘린더로 한눈에!
-        </CircleButton>
-        <CircleButton size={120} onClick={() => navigate("/Chat")}>
-          똑똑한 맞춤형 트레이너와 채팅
-        </CircleButton>
-        <CircleButton size={90} onClick={() => navigate("/Recommend")}>
-          추천 기능까지
-        </CircleButton>
-      </CircleContainer>
+      <BackgroundImage />
+      <TextContainer>
+        <Title>나만의 맞춤형 트레이너</Title>
+        <Subtitle>AI 트레이너와 실시간으로 대화하며 <br></br>나만의 맞춤형 운동 지도를 받아보세요.</Subtitle>
+        <RunButton onClick={goToChat}>채팅 시작</RunButton>
+      </TextContainer>
     </Container>
   );
-};
+}
 
 export default Main;
