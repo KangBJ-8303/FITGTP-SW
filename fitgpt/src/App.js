@@ -1,4 +1,4 @@
-// App.js 수정안
+// App.js
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Calendar from './Calendar';
@@ -7,6 +7,7 @@ import Chat from "./Chat";
 import Recommend from "./Recommend";
 import Signin from "./Signin";
 import Signup from "./Signup";
+import Profile from "./Profile"; // 프로필 컴포넌트 추가
 import Header from "./Header";
 import BottomNav from "./BottomNav";
 import styled from "styled-components";
@@ -32,11 +33,12 @@ function App() {
         <ContentWrapper>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/Write" element={<Calendar />} />
-            <Route path="/Chat" element={<Chat />} />
-            <Route path="/Recommend" element={<Recommend />} />
-            <Route path="/Signin" element={<Signin />} />
-            <Route path="/Signup" element={<Signup />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/recommend" element={<Recommend />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile" element={<Profile />} /> {/* 프로필 라우트 추가 */}
           </Routes>
         </ContentWrapper>
         <BottomNav />

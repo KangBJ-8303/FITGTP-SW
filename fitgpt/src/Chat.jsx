@@ -5,21 +5,26 @@ import styled from "styled-components";
 const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px); /* 상단바와 하단바 높이를 제외 */
-  max-width: 400px;
-  margin: auto;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px; /* 모바일 규격에 맞춘 너비 설정 */
+  height: 100%;
+  margin: 0 auto;
   background-color: #f7f7f7;
+  font-family: 'Noto Sans KR', sans-serif;
+  overflow: hidden;
 `;
 
 const MessageList = styled.div`
   flex: 1;
   padding: 0.5rem;
   overflow-y: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
 
-// Message 컴포넌트를 여기에 선언
 const Message = styled.div`
   max-width: 60%;
   padding: 0.3rem 0.6rem;
@@ -38,10 +43,10 @@ const InputArea = styled.div`
   padding: 0.5rem;
   background-color: #ffffff;
   border-top: 1px solid #ddd;
-  position: fixed;
-  bottom: 60px; /* 하단바 위 */
-  max-width: 400px;
   width: 100%;
+  max-width: 400px; 
+  position: fixed;
+  bottom: 60px; /* 하단바 바로 위 */
 `;
 
 const Input = styled.input`
