@@ -23,6 +23,9 @@ public class UserEntity {
     @Column
     private String userPassword;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserPhysicalEntity physicalInfo;
+
     public static UserEntity toUserEntity(UserDTO userDTO){
         UserEntity userEntity = new UserEntity();
         userEntity.setUserEmail(userDTO.getUserEmail());

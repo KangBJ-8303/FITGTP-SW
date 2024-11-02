@@ -59,6 +59,11 @@ public class UserService {
         }
     }
 
+    public UserDTO findUserByEmail(String email) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUserEmail(email);
+        return optionalUserEntity.map(UserDTO::toUserDTO).orElse(null);
+    }
+
     public UserDTO updateForm(String myEmail) {
         Optional<UserEntity> optionalUserEntity = userRepository.findByUserEmail(myEmail);
         if(optionalUserEntity.isPresent()) {
