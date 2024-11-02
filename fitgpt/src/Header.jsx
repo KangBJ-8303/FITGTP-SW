@@ -18,6 +18,7 @@ const HeaderContainer = styled.header`
   height: 70px; /* 고정 높이 설정 */
   box-sizing: border-box;
   overflow: hidden; /* 내용이 넘쳐도 스크롤이나 높이 변화를 방지 */
+  margin-bottom: -4rem;
 `;
 
 const Title = styled.h1`

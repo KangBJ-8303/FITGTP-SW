@@ -7,7 +7,7 @@ const CalendarContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
-  max-width: 360px; /* 모바일 규격에 맞춘 너비 */
+  max-width: 360px;
   margin: auto;
   background-color: #f7f7f7;
 `;
@@ -16,6 +16,25 @@ const Title = styled.h1`
   font-size: 1.5rem;
   color: #003366;
   margin-bottom: 1rem;
+`;
+
+const NavigationButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 1rem;
+`;
+
+const Button = styled.button`
+  background-color: transparent;
+  color: #003366;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  &:hover {
+    color: #00509e;
+  }
 `;
 
 const DaysGrid = styled.div`
@@ -51,14 +70,14 @@ const Modal = styled.div`
   bottom: 0;
   left: 50%;
   transform: translateX(-50%) translateY(${({ isVisible }) => (isVisible ? '0' : '100%')});
-  height: 50vh; /* 반쯤 올라오는 높이 */
+  height: 50vh;
   background-color: white;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
   padding: 1rem;
   width: 100%;
-  max-width: 360px; /* 모바일 규격에 맞춘 너비 */
+  max-width: 360px;
   transition: transform 0.3s ease-in-out;
 `;
 
@@ -70,7 +89,7 @@ const NoteTitle = styled.h3`
 `;
 
 const NoteInput = styled.textarea`
-  width: calc(100% - 20px); /* 모달 패딩과 맞춰 텍스트 입력 창 너비 조정 */
+  width: calc(100% - 20px);
   height: 60px;
   padding: 10px;
   font-size: 0.9rem;
@@ -103,7 +122,7 @@ export default function Calendar() {
 
   const handleDateClick = (date) => {
     setSelectedDate(date);
-    setModalVisible(true); // 날짜 클릭 시 모달 표시
+    setModalVisible(true);
   };
 
   const handleNoteChange = (e) => {
@@ -141,11 +160,23 @@ export default function Calendar() {
     ));
   };
 
+  const handlePreviousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
   return (
     <CalendarContainer>
-      <Title>
-        {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
-      </Title>
+      <NavigationButtons>
+        <Button onClick={handlePreviousMonth}>&lt;</Button>
+        <Title>
+          {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
+        </Title>
+        <Button onClick={handleNextMonth}>&gt;</Button>
+      </NavigationButtons>
       <DaysGrid>
         {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
           <DayBox key={day}>{day}</DayBox>
@@ -153,7 +184,6 @@ export default function Calendar() {
         {renderCalendar()}
       </DaysGrid>
 
-      {/* 반쯤 올라오는 모달 */}
       <Modal isVisible={isModalVisible}>
         <CloseButton onClick={() => setModalVisible(false)}>&times;</CloseButton>
         <NoteTitle>{selectedDate}의 메모</NoteTitle>
