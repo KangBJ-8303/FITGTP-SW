@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class RecommendationService {
+public class UserEvaluationService {
 
     @Autowired
     private MemoRepository memoRepository;
@@ -37,6 +37,11 @@ public class RecommendationService {
     public String getDietRecommendation(Long userId) {
         String prompt = generatePrompt(userId, "식단");
         return getRecommendationFromOpenAi(prompt, "식단");
+    }
+
+    public String getUserEvaluation(Long userId) {
+        String prompt = generatePrompt(userId, "운동");
+        return getRecommendationFromOpenAi(prompt, "운동");
     }
 
     private String generatePrompt(Long userId, String type) {

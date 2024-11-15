@@ -42,5 +42,4 @@ public class UserEntity {
         userEntity.setUserPassword(userDTO.getUserPassword());
         return userEntity;
     }
-
 }

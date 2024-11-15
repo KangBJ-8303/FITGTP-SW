@@ -31,5 +31,5 @@ public class UserPhysicalEntity {
     private double bodyFatPercentage; // 체지방률 (%)
 
     @Column
-    private double skeletalMuscleMass; // 골격근량 (kg)
+    private double muscleMass; // 골격근량 (kg)
 }

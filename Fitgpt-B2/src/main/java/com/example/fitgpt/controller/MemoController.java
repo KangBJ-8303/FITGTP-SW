@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -17,10 +19,21 @@ public class MemoController {
 
     // 특정 날짜의 메모를 조회
     @GetMapping("/{userId}/{date}")
-    public ResponseEntity<MemoDTO> getMemoByDate(@PathVariable Long userId, @PathVariable String date) {
+    public ResponseEntity<Map<String, String>> getMemoContentByDate(@PathVariable Long userId, @PathVariable String date) {
         Optional<MemoDTO> memo = memoService.findMemoByUserIdAndDate(userId, date);
-        return memo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.ok(new MemoDTO()));
+
+        if (memo.isPresent()) {
+            String content = memo.get().getContent();
+            Map<String, String> response = new HashMap<>();
+            response.put("content", content);
+            return ResponseEntity.ok(response);
+        }
+
+        Map<String, String> emptyResponse = new HashMap<>();
+        emptyResponse.put("content", "내용을 입력해주세요.");
+        return ResponseEntity.ok(emptyResponse);
     }
+
 
     // 메모 저장
     @PostMapping("/{userId}/{date}")

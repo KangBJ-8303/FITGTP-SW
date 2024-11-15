@@ -17,7 +17,7 @@ public class UserPhysicalDTO {
     private double weight; // 몸무게 (kg)
     private int age; // 나이
     private double bodyFatPercentage; // 체지방률 (%)
-    private double skeletalMuscleMass; // 골격근량 (kg)
+    private double muscleMass; // 골격근량 (kg)
 
     // UserPhysicalInfoEntity를 UserPhysicalInfoDTO로 변환하는 메서드
     public static UserPhysicalDTO toDTO(UserPhysicalEntity physicalInfoEntity) {
@@ -27,7 +27,7 @@ public class UserPhysicalDTO {
         dto.setWeight(physicalInfoEntity.getWeight());
         dto.setAge(physicalInfoEntity.getAge());
         dto.setBodyFatPercentage(physicalInfoEntity.getBodyFatPercentage());
-        dto.setSkeletalMuscleMass(physicalInfoEntity.getSkeletalMuscleMass());
+        dto.setMuscleMass(physicalInfoEntity.getMuscleMass());
         return dto;
     }
 
@@ -38,7 +38,7 @@ public class UserPhysicalDTO {
         entity.setWeight(dto.getWeight());
         entity.setAge(dto.getAge());
         entity.setBodyFatPercentage(dto.getBodyFatPercentage());
-        entity.setSkeletalMuscleMass(dto.getSkeletalMuscleMass());
+        entity.setMuscleMass(dto.getMuscleMass());
         return entity;
     }
 }
