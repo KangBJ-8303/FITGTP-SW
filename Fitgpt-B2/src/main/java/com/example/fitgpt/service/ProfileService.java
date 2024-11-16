@@ -57,9 +57,9 @@ public class ProfileService {
                 "- 키: " + physicalInfo.getHeight() + " cm\n" +
                 "- 몸무게: " + physicalInfo.getWeight() + " kg\n" +
                 "- 나이: " + physicalInfo.getAge() + " 세\n" +
-                "- 체지방률: " + physicalInfo.getBodyFatPercentage() + " %\n" +
+                "- 체지방률: " + physicalInfo.getBodyFat() + " %\n" +
                 "- 골격근량: " + physicalInfo.getMuscleMass() + " kg\n\n" +
-                "위 데이터를 기반으로 사용자 몸의 현재 상태를 평가하고, 개선을 위해 필요한 조언을 간단히 제공해 주세요.";
+                "위 데이터를 기반으로 사용자 몸의 현재 상태를 평가하고, 개선을 위해 필요한 조언을 간단히 제공해 주세요. 50글자 내로 응답해줘";
     }
 
     private String getRecommendationFromOpenAi(String prompt) {

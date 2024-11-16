@@ -29,17 +29,23 @@ public class RecommendationService {
     @Value("${openai.api.url}")
     private String openAiApiUrl;
 
+    @Value("${openai.exercise_fine_tuned_model}")
+    private String exerciseFineTunedModel; // Fine-tuned 모델 ID
+
+    @Value("${openai.diet_fine_tuned_model}")
+    private String dietFineTunedModel; // Fine-tuned 모델 ID
+
     public String getExerciseRecommendation(Long userId) {
-        String prompt = generatePrompt(userId, "운동");
-        return getRecommendationFromOpenAi(prompt, "운동");
+        String userContext = generateContext(userId, "운동");
+        return getRecommendationFromOpenAi(userContext, "운동");
     }
 
     public String getDietRecommendation(Long userId) {
-        String prompt = generatePrompt(userId, "식단");
-        return getRecommendationFromOpenAi(prompt, "식단");
+        String userContext = generateContext(userId, "식단");
+        return getRecommendationFromOpenAi(userContext, "식단");
     }
 
-    private String generatePrompt(Long userId, String type) {
+    private String generateContext(Long userId, String type) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(7);
         List<MemoEntity> memoList = memoRepository.findByUserIdAndDateBetween(userId, startDate.toString(), endDate.toString());
@@ -49,23 +55,30 @@ public class RecommendationService {
 
         String memoContent = memoList.stream().map(MemoEntity::getContent).reduce("", (a, b) -> a + "\n" + b);
 
-        return "사용자의 기록: " + memoContent + "\n\n" +
-                "사용자의 신체 정보:\n" +
+        return //"사용자의 기록: " + memoContent + "\n\n" +
+                "사용자의 신체 정보:\n" + "성별: 남" +
                 "키: " + physicalInfo.getHeight() + " cm\n" +
                 "몸무게: " + physicalInfo.getWeight() + " kg\n" +
                 "나이: " + physicalInfo.getAge() + " 세\n" +
-                "체지방률: " + physicalInfo.getBodyFatPercentage() + " %\n" +
-                "골격근량: " + physicalInfo.getMuscleMass() + " kg\n\n" +
-                "위 정보를 바탕으로 사용자에게 적합한 " + type + " 1가지를 키워드(ex데드리프트)로 추천해줘.";
+                "체지방량: " + physicalInfo.getBodyFat() + " %\n" +
+                "근육량: " + physicalInfo.getMuscleMass() + " kg\n\n" +
+                type + "을 키워드 하나로 추천해줘";
     }
 
-    private String getRecommendationFromOpenAi(String prompt, String type) {
+    private String getRecommendationFromOpenAi(String context, String type) {
         try {
-            ChatGPTRequest chatRequest = new ChatGPTRequest("gpt-3.5-turbo", prompt);
+            ChatGPTRequest chatRequest =null;
+
+            if(type.equals("운동")){
+                chatRequest = new ChatGPTRequest(exerciseFineTunedModel, context);
+            }
+            else if(type.equals("식단")){
+                chatRequest = new ChatGPTRequest(dietFineTunedModel, context);
+            }
             ChatGPTResponse chatResponse = restTemplate.postForObject(openAiApiUrl, chatRequest, ChatGPTResponse.class);
 
             if (chatResponse != null && !chatResponse.getChoices().isEmpty()) {
-                return type + " 추천:\n" + chatResponse.getChoices().get(0).getMessage().getContent();
+                return chatResponse.getChoices().get(0).getMessage().getContent();
             } else {
                 return type + " 추천을 생성하는 데 문제가 발생했습니다.";
             }
