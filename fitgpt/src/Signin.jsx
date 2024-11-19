@@ -67,7 +67,7 @@ function Signin() {
         const result = await response.json();
         console.log("로그인 성공:", result);
         // 로그인 성공 시 이동할 경로
-        navigate("/dashboard");
+        navigate("/");
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
