@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const RecommendContainer = styled.div`
@@ -14,6 +14,12 @@ const RecommendContainer = styled.div`
 const Title = styled.h2`
   font-size: 1.5rem;
   color: #003366;
+  margin-bottom: 1rem;
+`;
+
+const Subtitle = styled.p`
+  font-size: 1rem;
+  color: #666;
   margin-bottom: 1rem;
 `;
 
@@ -58,34 +64,46 @@ export default function Recommend() {
     exercise: ""
   });
 
-  const getRecommendations = () => {
-    const diets = [
-      "근육 증가를 위한 고단백 식단",
-      "체중 감량을 위한 저탄수화물 식단",
-      "체중 유지를 위한 균형 잡힌 식단",
-      "건강한 삶을 위한 채식 식단"
-    ];
-    
-    const exercises = [
-      "30분 유산소 운동",
-      "45분 근력 운동",
-      "15분 요가 세션",
-      "1시간 자전거 타기"
-    ];
+  // Replace with the actual user ID you want to use
+  const userId = "user123";
 
-    const randomDiet = diets[Math.floor(Math.random() * diets.length)];
-    const randomExercise = exercises[Math.floor(Math.random() * exercises.length)];
+  const getPersonalizedRecommendations = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/recommendations/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch recommendations");
+      }
+      const data = await response.json();
+      const newRecommendation = {
+        diet: data.diet,
+        exercise: data.exercise
+      };
 
-    setRecommendation({
-      diet: randomDiet,
-      exercise: randomExercise
-    });
+      localStorage.setItem("dailyRecommendation", JSON.stringify(newRecommendation));
+      localStorage.setItem("recommendationDate", new Date().toDateString());
+      setRecommendation(newRecommendation);
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+    }
   };
+
+  useEffect(() => {
+    const storedDate = localStorage.getItem("recommendationDate");
+    const today = new Date().toDateString();
+
+    if (storedDate !== today) {
+      getPersonalizedRecommendations();
+    } else {
+      const storedRecommendation = JSON.parse(localStorage.getItem("dailyRecommendation"));
+      if (storedRecommendation) setRecommendation(storedRecommendation);
+    }
+  }, []);
 
   return (
     <RecommendContainer>
-      <Title>오늘의 추천</Title>
-      <Button onClick={getRecommendations}>추천 받기</Button>
+      <Title>오늘의 맞춤 추천</Title>
+      <Subtitle>목표: 근육 증가</Subtitle>
+      <Button onClick={getPersonalizedRecommendations}>새 추천 받기</Button>
       <RecommendationContainer>
         <RecommendationTitle>식단</RecommendationTitle>
         <RecommendationText>{recommendation.diet || "추천을 받으려면 버튼을 눌러주세요."}</RecommendationText>
