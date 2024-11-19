@@ -161,11 +161,11 @@ function Calendar() {
       const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${selectedDate}`);
       if (response.ok) {
         const data = await response.json();
-        if (data.notes) {
-          setNoteText(data.notes.join('\n'));
+        if (data.content) {
+          setNoteText(data.content.join('\n'));
           setNotes((prevNotes) => ({
             ...prevNotes,
-            [selectedDate]: data.notes,
+            [selectedDate]: data.content,
           }));
         }
       } else {
