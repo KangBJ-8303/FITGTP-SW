@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
 import styled from 'styled-components';
 
 const CalendarContainer = styled.div`
@@ -159,13 +158,23 @@ export default function Calendar({ userId }) {
     setErrorMessage('');
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/memos/${userId}/${date}`);
-      if (response.data && response.data.notes) {
-        setNoteText(response.data.notes.join('\n'));
-        setNotes((prevNotes) => ({
-          ...prevNotes,
-          [date]: response.data.notes
-        }));
+      const response = await fetch(`http://localhost:8080/api/memos/${userId}/${date}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.notes) {
+          setNoteText(data.notes.join('\n'));
+          setNotes((prevNotes) => ({
+            ...prevNotes,
+            [date]: data.notes,
+          }));
+        }
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
     } catch (error) {
       console.error('메모 불러오기 오류:', error);
@@ -183,13 +192,28 @@ export default function Calendar({ userId }) {
     const newNotes = noteText.split('\n').filter(note => note.trim() !== '');
     setErrorMessage('');
 
+    const requestBody = {
+      userEmail: userId,  // userId를 userEmail로 사용함
+      date: selectedDate,
+      content: newNotes,
+    };
+
     try {
-      await axios.post(`http://localhost:8080/api/memos/${userId}/${selectedDate}`, {
-        notes: newNotes
+      const response = await fetch(`http://localhost:8080/api/memos/${userId}/${selectedDate}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       setNotes((prevNotes) => ({
         ...prevNotes,
-        [selectedDate]: newNotes
+        [selectedDate]: newNotes,
       }));
       setModalVisible(false);
     } catch (error) {
@@ -268,13 +292,14 @@ export default function Calendar({ userId }) {
           <NoteInput
             value={noteText}
             onChange={handleNoteChange}
-            placeholder="운동이나 식단을 작성해주세요"
+            placeholder="운동 및 식단 내용을 입력하세요."
           />
-          {loading && <div>로딩 중...</div>}
-          {errorMessage && <FeedbackMessage>{errorMessage}</FeedbackMessage>}
           <SaveButton onClick={saveNote}>저장</SaveButton>
+          {loading && <FeedbackMessage>로딩 중...</FeedbackMessage>}
+          {errorMessage && <FeedbackMessage>{errorMessage}</FeedbackMessage>}
         </Modal>
       )}
     </CalendarContainer>
   );
 }
+
