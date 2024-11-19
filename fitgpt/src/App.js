@@ -1,16 +1,26 @@
 // App.js
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Calendar from './Calendar';
 import Main from './Main';
-import Chat from "./Chat";
-import Recommend from "./Recommend";
-import Signin from "./Signin";
-import Signup from "./Signup";
-import Profile from "./Profile"; // 프로필 컴포넌트 추가
-import Header from "./Header";
-import BottomNav from "./BottomNav";
-import styled from "styled-components";
+import Chat from './Chat';
+import Recommend from './Recommend';
+import Signin from './Signin';
+import Signup from './Signup';
+import Profile from './Profile'; // 프로필 컴포넌트 추가
+import Header from './Header';
+import BottomNav from './BottomNav';
+import { styled, createGlobalStyle } from 'styled-components';
+import { RecoilRoot } from 'recoil';
+
+// 전역 스타일 설정
+const GlobalStyle = createGlobalStyle`
+  body, h1, p {
+    margin: 0;
+    padding: 0;
+  }
+`;
 
 const AppContainer = styled.div`
   display: flex;
@@ -28,9 +38,11 @@ const ContentWrapper = styled.div`
 function App() {
   return (
     <AppContainer>
+      <GlobalStyle /> {/* 전역 스타일 적용 */}
       <BrowserRouter>
         <Header />
         <ContentWrapper>
+          <RecoilRoot>
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/calendar" element={<Calendar />} />
@@ -40,6 +52,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} /> {/* 프로필 라우트 추가 */}
           </Routes>
+          </RecoilRoot>
         </ContentWrapper>
         <BottomNav />
       </BrowserRouter>
@@ -48,3 +61,4 @@ function App() {
 }
 
 export default App;
+
