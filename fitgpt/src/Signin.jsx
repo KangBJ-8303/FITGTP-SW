@@ -47,8 +47,8 @@ const SigninButton = styled.button`
 
 function Signin() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
 
   const handleSignin = async () => {
     try {
@@ -58,8 +58,8 @@ function Signin() {
           'Content-Type': 'application/json; charset=utf-8',
         },
         body: JSON.stringify({
-          userName,
-          password,
+          userEmail,
+          userPassword,
         }),
       });
 
@@ -81,16 +81,16 @@ function Signin() {
     <Container>
       <Title>로그인</Title>
       <Input
-        type="text"
-        placeholder="아이디"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        type="email"
+        placeholder="이메일"
+        value={userEmail}
+        onChange={(e) => setUserEmail(e.target.value)}
       />
       <Input
         type="password"
         placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={userPassword}
+        onChange={(e) => setUserPassword(e.target.value)}
       />
       <SigninButton onClick={handleSignin}>로그인</SigninButton>
     </Container>
@@ -98,4 +98,5 @@ function Signin() {
 }
 
 export default Signin;
+
 
