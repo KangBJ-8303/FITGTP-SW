@@ -1,5 +1,5 @@
-// Calendar.jsx
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; 
 import styled from 'styled-components';
 
 const CalendarContainer = styled.div`
@@ -57,12 +57,19 @@ const Day = styled.div`
   cursor: pointer;
   text-align: center;
   border-radius: 5px;
-  background-color: ${({ isSelected }) => (isSelected ? 'lightblue' : 'lightgray')};
+  background-color: ${({ isSelected, hasNotes }) =>
+    isSelected ? 'lightblue' : hasNotes ? 'gray' : 'lightgray'};
   color: ${({ isToday }) => (isToday ? '#004080' : '#333')};
   font-weight: ${({ isToday }) => (isToday ? 'bold' : 'normal')};
   &:hover {
     background-color: #d0e4f7;
   }
+`;
+
+const EmptyDay = styled.div`
+  padding: 10px;
+  margin: 5px;
+  background-color: transparent;
 `;
 
 const Modal = styled.div`
@@ -97,6 +104,7 @@ const NoteInput = styled.textarea`
   border-radius: 5px;
   resize: none;
   box-sizing: border-box;
+  margin-bottom: 0.5rem;
 `;
 
 const CloseButton = styled.button`
@@ -110,35 +118,99 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
-export default function Calendar() {
+const SaveButton = styled.button`
+  margin-top: 1rem;
+  padding: 8px 16px;
+  background-color: #00509e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  &:hover {
+    background-color: #003366;
+  }
+`;
+
+const FeedbackMessage = styled.div`
+  color: #d9534f;
+  margin-top: 1rem;
+  text-align: center;
+`;
+
+export default function Calendar({ userId }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [notes, setNotes] = useState({});
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isModalVisible, setModalVisible] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     setCurrentMonth(new Date());
   }, []);
 
-  const handleDateClick = (date) => {
+  const handleDateClick = async (date) => {
     setSelectedDate(date);
+    setNoteText('');
     setModalVisible(true);
+    setLoading(true);
+    setErrorMessage('');
+
+    try {
+      const response = await axios.get(`http://localhost:8080/api/memos/${userId}/${date}`);
+      if (response.data && response.data.notes) {
+        setNoteText(response.data.notes.join('\n'));
+        setNotes((prevNotes) => ({
+          ...prevNotes,
+          [date]: response.data.notes
+        }));
+      }
+    } catch (error) {
+      console.error('메모 불러오기 오류:', error);
+      setErrorMessage('메모를 불러오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNoteChange = (e) => {
-    setNotes({
-      ...notes,
-      [selectedDate]: e.target.value,
-    });
+    setNoteText(e.target.value);
+  };
+
+  const saveNote = async () => {
+    const newNotes = noteText.split('\n').filter(note => note.trim() !== '');
+    setErrorMessage('');
+
+    try {
+      await axios.post(`http://localhost:8080/api/memos/${userId}/${selectedDate}`, {
+        notes: newNotes
+      });
+      setNotes((prevNotes) => ({
+        ...prevNotes,
+        [selectedDate]: newNotes
+      }));
+      setModalVisible(false);
+    } catch (error) {
+      console.error('메모 저장 오류:', error);
+      setErrorMessage('메모를 저장하는 중 오류가 발생했습니다.');
+    }
   };
 
   const getDaysInMonth = (year, month) => {
-    const date = new Date(year, month, 1);
     const days = [];
-    while (date.getMonth() === month) {
-      days.push(new Date(date));
-      date.setDate(date.getDate() + 1);
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null);
     }
+
+    for (let i = 1; i <= lastDate; i++) {
+      days.push(new Date(year, month, i));
+    }
+
     return days;
   };
 
@@ -148,16 +220,21 @@ export default function Calendar() {
     const days = getDaysInMonth(year, month);
     const today = new Date().toDateString();
 
-    return days.map((date) => (
-      <Day
-        key={date}
-        onClick={() => handleDateClick(date.toDateString())}
-        isSelected={selectedDate === date.toDateString()}
-        isToday={date.toDateString() === today}
-      >
-        {date.getDate()}
-      </Day>
-    ));
+    return days.map((date, index) =>
+      date ? (
+        <Day
+          key={index}
+          onClick={() => handleDateClick(date.toDateString())}
+          isSelected={selectedDate === date.toDateString()}
+          isToday={date.toDateString() === today}
+          hasNotes={Boolean(notes[date.toDateString()])}
+        >
+          {date.getDate()}
+        </Day>
+      ) : (
+        <EmptyDay key={index} />
+      )
+    );
   };
 
   const handlePreviousMonth = () => {
@@ -184,15 +261,20 @@ export default function Calendar() {
         {renderCalendar()}
       </DaysGrid>
 
-      <Modal isVisible={isModalVisible}>
-        <CloseButton onClick={() => setModalVisible(false)}>&times;</CloseButton>
-        <NoteTitle>{selectedDate}의 메모</NoteTitle>
-        <NoteInput
-          value={notes[selectedDate] || ''}
-          onChange={handleNoteChange}
-          placeholder="내용을 입력하세요..."
-        />
-      </Modal>
+      {isModalVisible && (
+        <Modal isVisible={isModalVisible}>
+          <CloseButton onClick={() => setModalVisible(false)}>&times;</CloseButton>
+          <NoteTitle>운동, 식단 기록하기</NoteTitle>
+          <NoteInput
+            value={noteText}
+            onChange={handleNoteChange}
+            placeholder="운동이나 식단을 작성해주세요"
+          />
+          {loading && <div>로딩 중...</div>}
+          {errorMessage && <FeedbackMessage>{errorMessage}</FeedbackMessage>}
+          <SaveButton onClick={saveNote}>저장</SaveButton>
+        </Modal>
+      )}
     </CalendarContainer>
   );
 }
