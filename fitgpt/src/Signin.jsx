@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+// Signin.jsx
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { userEmailState } from './atoms'; // userEmail 상태를 import
 
 const Container = styled.div`
   display: flex;
@@ -47,33 +50,30 @@ const SigninButton = styled.button`
 
 function Signin() {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const setUserEmail = useSetRecoilState(userEmailState); // Recoil 상태 업데이트용 훅
+  const [userEmail, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSignin = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/user/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json; charset=utf-8',
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          userEmail,
-          userPassword,
-        }),
+        body: JSON.stringify({ userEmail, password }),
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log("로그인 성공:", result);
-        // 로그인 성공 시 이동할 경로
-        navigate("/");
+        const data = await response.json();
+        setUserEmail(userEmail); // 로그인 성공 시 Recoil 상태에 userEmail 저장
+        navigate('/calendar'); // 로그인 후 캘린더 페이지로 이동
       } else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error('로그인 실패');
       }
     } catch (error) {
-      console.error("로그인 실패:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      console.error('로그인 실패:', error);
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -84,13 +84,13 @@ function Signin() {
         type="email"
         placeholder="이메일"
         value={userEmail}
-        onChange={(e) => setUserEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <Input
         type="password"
         placeholder="비밀번호"
-        value={userPassword}
-        onChange={(e) => setUserPassword(e.target.value)}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <SigninButton onClick={handleSignin}>로그인</SigninButton>
     </Container>
