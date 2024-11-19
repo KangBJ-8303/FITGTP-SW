@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // axios import
 
 const Container = styled.div`
   display: flex;
@@ -53,13 +52,24 @@ function Signin() {
 
   const handleSignin = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/user/login', {
-        username,
-        password
+      const response = await fetch('http://localhost:8080/api/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: JSON.stringify({
+          userName,
+          password,
+        }),
       });
-      if (response.status === 200) {
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("로그인 성공:", result);
         // 로그인 성공 시 이동할 경로
         navigate("/dashboard");
+      } else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
     } catch (error) {
       console.error("로그인 실패:", error);
@@ -88,3 +98,4 @@ function Signin() {
 }
 
 export default Signin;
+
