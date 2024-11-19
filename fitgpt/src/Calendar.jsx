@@ -147,6 +147,13 @@ function Calendar() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     // userEmail이 있으면 메모를 가져오기
     if (userEmail && selectedDate) {
@@ -158,14 +165,15 @@ function Calendar() {
     setLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${selectedDate}`);
+      const formattedDate = formatDate(new Date(selectedDate));
+      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${formattedDate}`);
       if (response.ok) {
         const data = await response.json();
         if (data.content) {
           setNoteText(data.content.join('\n'));
           setNotes((prevNotes) => ({
             ...prevNotes,
-            [selectedDate]: data.content,
+            [formattedDate]: data.content,
           }));
         }
       } else {
@@ -187,14 +195,15 @@ function Calendar() {
     const newNotes = noteText.split('\n').filter(note => note.trim() !== '');
     setErrorMessage('');
     try {
-      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${selectedDate}`, {
+      const formattedDate = formatDate(new Date(selectedDate));
+      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${formattedDate}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userEmail: userEmail,  // 로그인된 사용자 이메일
-          date: selectedDate,    // 선택한 날짜
+          date: formattedDate,   // 선택한 날짜 (YYYY-MM-DD 형식)
           content: noteText,     // 메모 내용
         }),
       });
@@ -202,7 +211,7 @@ function Calendar() {
       if (response.ok) {
         setNotes((prevNotes) => ({
           ...prevNotes,
-          [selectedDate]: newNotes,
+          [formattedDate]: newNotes,
         }));
         setNoteText('');
         alert('메모가 저장되었습니다.');
@@ -219,12 +228,13 @@ function Calendar() {
     // 달력 날짜 렌더링 로직 (가짜 데이터 예시)
     const days = [];
     for (let i = 1; i <= 30; i++) {
+      const date = `2024-01-${String(i).padStart(2, '0')}`;
       days.push(
         <Day
-          key={i}
-          isSelected={selectedDate === i}
-          onClick={() => setSelectedDate(i)}
-          hasNotes={notes[i] && notes[i].length > 0}
+          key={date}
+          isSelected={selectedDate === date}
+          onClick={() => setSelectedDate(date)}
+          hasNotes={notes[date] && notes[date].length > 0}
         >
           {i}
         </Day>
@@ -254,5 +264,6 @@ function Calendar() {
 }
 
 export default Calendar;
+
 
 
