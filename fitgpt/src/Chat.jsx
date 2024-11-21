@@ -1,4 +1,3 @@
-// Chat.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -74,22 +73,34 @@ function Chat() {
 
   const handleSend = async () => {
     if (input.trim()) {
+      // 사용자 메시지 전송
       const userMessage = { text: input, isSender: true };
       setMessages([...messages, userMessage]);
       setInput("");
 
       try {
-        const response = await fetch("https://your-ai-api.com/message", {
+        // API 호출하여 AI 응답 받기
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: input }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer YOUR_OPENAI_API_KEY`  // 실제 API 키를 여기에 넣어야 합니다
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",  // OpenAI 모델 선택
+            messages: [{ role: "user", content: input }],
+          }),
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP 오류! 상태: ${response.status}`);
+        }
+
         const data = await response.json();
-        const aiMessage = { text: data.reply, isSender: false };
+        const aiMessage = { text: data.choices[0].message.content, isSender: false };
         setMessages((prevMessages) => [...prevMessages, aiMessage]);
       } catch (error) {
-        console.error("Error sending message:", error);
+        console.error("메시지 전송 오류:", error);
       }
     }
   };
@@ -110,7 +121,7 @@ function Chat() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="이렇게 말해보세요: 하체운동 어떤 게 좋아?"
         />
-        <SendButton onClick={handleSend}>Send</SendButton>
+        <SendButton onClick={handleSend}>전송</SendButton>
       </InputArea>
     </ChatContainer>
   );
