@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // axios import
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const Input = styled.input`
   font-size: 1rem;
 `;
 
-const SignupButton = styled.button`
+const Button = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: #004080;
   color: white;
@@ -48,20 +48,32 @@ const SignupButton = styled.button`
 
 function Signup() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState(1); // 현재 단계 관리
+  const [info, setInfo] = useState({
+    userName: '',
+    userEmail: '',
+    userPassword: '',
+    gender: '',
+    height: '',
+    weight: '',
+    age: '',
+    bodyFat: '',
+    muscleMass: '',
+  })
+
+  const handleNext = () => {
+    if (step === 1) setStep(2);
+  };
 
   const handleSignup = async () => {
     try {
       const response = await axios.post('http://localhost:8080/api/user/register', {
-        username,
-        email,
-        password
+
+        ...info,
       });
       if (response.status === 200) {
-        // 회원가입 성공 시 이동할 경로
-        navigate("/welcome");
+        alert("회원가입이 완료되었습니다.");
+        navigate("/signin"); // 회원가입 성공 시 로그인 페이지로 이동
       }
     } catch (error) {
       console.error("회원가입 실패:", error);
@@ -72,25 +84,70 @@ function Signup() {
   return (
     <Container>
       <Title>회원가입</Title>
-      <Input
-        type="text"
-        placeholder="아이디"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <Input
-        type="email"
-        placeholder="이메일"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <SignupButton onClick={handleSignup}>회원가입</SignupButton>
+      {step === 1 && (
+        <>
+          <Input
+            type="text"
+            placeholder="아이디"
+            value={info.userName}
+            onChange={(e) => setInfo({ ...info, userName: e.target.value })}
+          />
+          <Input
+            type="email"
+            placeholder="이메일"
+            value={info.userEmail}
+            onChange={(e) => setInfo({ ...info, userEmail: e.target.value })}
+          />
+          <Input
+            type="password"
+            placeholder="비밀번호"
+            value={info.userPassword}
+            onChange={(e) => setInfo({ ...info, userPassword: e.target.value })}
+          />
+          <Button onClick={handleNext}>다음</Button>
+        </>
+      )}
+      {step === 2 && (
+        <>
+          <Input
+            type="text"
+            placeholder="성별 (남/여)"
+            value={info.gender}
+            onChange={(e) => setInfo({ ...info, gender: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="키 (cm)"
+            value={info.height}
+            onChange={(e) => setInfo({ ...info, height: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="몸무게 (kg)"
+            value={info.weight}
+            onChange={(e) => setInfo({ ...info, weight: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="나이"
+            value={info.age}
+            onChange={(e) => setInfo({ ...info, age: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="체지방률 (%)"
+            value={info.bodyFat}
+            onChange={(e) => setInfo({ ...info, bodyFat: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="골격근량 (kg)"
+            value={info.muscleMass}
+            onChange={(e) => setInfo({ ...info, muscleMass: e.target.value })}
+          />
+          <Button onClick={handleSignup}>회원가입</Button>
+        </>
+      )}
     </Container>
   );
 }
