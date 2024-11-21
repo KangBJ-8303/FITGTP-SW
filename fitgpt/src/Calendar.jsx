@@ -167,15 +167,14 @@ function Calendar() {
     try {
       const formattedDate = formatDate(new Date(selectedDate));
       const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${formattedDate}`);
+      
       if (response.ok) {
-        const data = await response.json();
-        if (data.content) {
-          setNoteText(data.content.join('\n'));
-          setNotes((prevNotes) => ({
-            ...prevNotes,
-            [formattedDate]: data.content,
-          }));
-        }
+        const content = await response.text(); // JSON 대신 단순 문자열로 받음
+        setNoteText(content);
+        setNotes((prevNotes) => ({
+          ...prevNotes,
+          [formattedDate]: content,
+        }));
       } else {
         throw new Error('메모를 가져오는 중 오류가 발생했습니다.');
       }
@@ -264,7 +263,5 @@ function Calendar() {
 }
 
 export default Calendar;
-
-
 
 
