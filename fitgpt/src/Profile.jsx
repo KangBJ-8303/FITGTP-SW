@@ -1,6 +1,7 @@
-// Profile.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { userEmailState } from './atoms';
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -12,7 +13,6 @@ const ProfileContainer = styled.div`
   max-width: 360px;
   margin: auto;
   font-family: 'Noto Sans KR', sans-serif;
-  /* height 속성 제거 */
   box-sizing: border-box;
 `;
 
@@ -26,7 +26,7 @@ const ProfileTitle = styled.h1`
 const InfoContainer = styled.div`
   width: 100%;
   border: 1px solid #ddd;
-  padding: 0.75rem; /* 패딩을 줄여 컴팩트하게 */
+  padding: 0.75rem;
   background-color: #f9f9f9;
   margin-bottom: 1rem;
 `;
@@ -46,31 +46,121 @@ const Label = styled.span`
   color: #003366;
 `;
 
-const Value = styled.span`
+const Value = styled.input`
   color: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0.3rem;
+  width: 70%;
+  font-size: 1rem;
 `;
 
 const SummaryText = styled.div`
   width: 100%;
   background-color: #e8f5ff;
-  padding: 0.5rem; /* 패딩을 줄여 높이 조정 */
+  padding: 0.5rem;
   color: #333;
   font-size: 0.9rem;
   line-height: 1.4;
-  margin-top: 0.5rem; /* 위쪽 여백을 줄임 */
+  margin-top: 0.5rem;
+`;
+
+const SaveButton = styled.button`
+  padding: 0.5rem 1rem;
+  background-color: #004080;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  &:hover {
+    background-color: #003366;
+  }
 `;
 
 function Profile() {
-  // 샘플 데이터, 실제 데이터는 백엔드 또는 상태관리에서 가져올 수 있습니다.
-  const userData = {
-    name: '홍길동',
-    height: '175cm',
-    weight: '68kg',
-    age: '29세',
-    workoutRecords: [
-      { date: '2024-11-01', activity: '하체 운동', duration: '1시간' },
-      { date: '2024-11-02', activity: '상체 운동', duration: '45분' },
-    ],
+  const userEmail = useRecoilValue(userEmailState); // Recoil에서 현재 이메일 상태 읽기
+  const [userData, setUserData] = useState({
+    name: '',
+    height: '',
+    weight: '',
+    age: '',
+    memo: [], // 운동 기록 데이터
+    evaluation: '', // ChatGPT의 평가 데이터
+  });
+
+  // 사용자 정보 받기 (GET)
+  const fetchUserInfo = async () => {
+    if (!userEmail) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/profiles/${userEmail}`);
+      if (!response.ok) {
+        throw new Error('서버 응답에 문제가 있습니다.');
+      }
+      const data = await response.json();
+      setUserData({
+        name: data.name || '',
+        height: data.height || '',
+        weight: data.weight || '',
+        age: data.age || '',
+        memo: data.workoutRecord || [], // 운동 기록 초기화
+        evaluation: data.evaluation || '', // ChatGPT 평가 데이터
+      });
+    } catch (error) {
+      console.error('사용자 정보를 가져오는 중 오류 발생:', error);
+      alert('사용자 정보를 가져올 수 없습니다. 다시 시도해주세요.');
+    }
+  };
+
+  // 사용자 정보 수정하기 (PUT)
+  const updateUserInfo = async () => {
+    if (!userEmail) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const { name, height, weight, age } = userData;
+
+    try {
+      const response = await fetch('http://localhost:8080/api/user/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userEmail,
+          name,
+          height,
+          weight,
+          age,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('정보 수정에 실패했습니다.');
+      }
+
+      alert('정보가 성공적으로 수정되었습니다.');
+    } catch (error) {
+      console.error('정보 수정 중 오류 발생:', error);
+      alert('정보 수정에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo(); // 컴포넌트 마운트 시 사용자 정보 가져오기
+  }, []);
+
+  const handleInputChange = (e, field) => {
+    setUserData({
+      ...userData,
+      [field]: e.target.value,
+    });
   };
 
   return (
@@ -79,36 +169,51 @@ function Profile() {
       <InfoContainer>
         <InfoItem>
           <Label>이름:</Label>
-          <Value>{userData.name}</Value>
+          <Value
+            type="text"
+            value={userData.name}
+            onChange={(e) => handleInputChange(e, 'name')}
+          />
         </InfoItem>
         <InfoItem>
           <Label>신장:</Label>
-          <Value>{userData.height}</Value>
+          <Value
+            type="text"
+            value={userData.height}
+            onChange={(e) => handleInputChange(e, 'height')}
+          />
         </InfoItem>
         <InfoItem>
           <Label>체중:</Label>
-          <Value>{userData.weight}</Value>
+          <Value
+            type="text"
+            value={userData.weight}
+            onChange={(e) => handleInputChange(e, 'weight')}
+          />
         </InfoItem>
         <InfoItem>
           <Label>나이:</Label>
-          <Value>{userData.age}</Value>
+          <Value
+            type="text"
+            value={userData.age}
+            onChange={(e) => handleInputChange(e, 'age')}
+          />
         </InfoItem>
       </InfoContainer>
+      <SaveButton onClick={updateUserInfo}>정보 수정 저장</SaveButton>
       <SummaryText>
-        <strong>최근 운동 기록:</strong>
+        <strong>운동 기록:</strong>
         <ul>
-          {userData.workoutRecords.map((record, index) => (
-            <li key={index}>
-              {record.date}: {record.activity} ({record.duration})
-            </li>
+          {userData.memo.map((record, index) => (
+            <li key={index}>{record}</li>
           ))}
         </ul>
-      </SummaryText>
-      <SummaryText>
-        {"홍길동님은 최근 일주일간 꾸준히 운동을 유지하며, 근력과 유산소 운동을 균형 있게 수행하고 있습니다. 현재 체중에는 큰 변화가 없지만, 체력과 근지구력은 안정적으로 향상 중입니다. 꾸준한 운동과 더불어 스트레칭을 포함해 유연성도 함께 관리하시면 건강 유지에 큰 도움이 될 것입니다."}
+        <strong>평가:</strong>
+        <p>{userData.evaluation}</p>
       </SummaryText>
     </ProfileContainer>
   );
 }
 
 export default Profile;
+
