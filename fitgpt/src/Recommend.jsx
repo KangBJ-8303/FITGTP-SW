@@ -61,29 +61,22 @@ const RecommendationText = styled.p`
 export default function Recommend() {
   const [recommendation, setRecommendation] = useState({
     diet: "",
-    exercise: "",
+    exercise: ""
   });
 
-  // Replace with the actual user email
-  const userEmail = "user@example.com";
+  // Replace with the actual user ID you want to use
+  const userId = "user123";
 
   const getPersonalizedRecommendations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/recommendations/${userEmail}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await fetch(`http://localhost:8080/api/recommendations/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch recommendations");
       }
-
       const data = await response.json();
       const newRecommendation = {
         diet: data.diet,
-        exercise: data.exercise,
+        exercise: data.exercise
       };
 
       localStorage.setItem("dailyRecommendation", JSON.stringify(newRecommendation));
@@ -113,17 +106,12 @@ export default function Recommend() {
       <Button onClick={getPersonalizedRecommendations}>새 추천 받기</Button>
       <RecommendationContainer>
         <RecommendationTitle>식단</RecommendationTitle>
-        <RecommendationText>
-          {recommendation.diet || "추천을 받으려면 버튼을 눌러주세요."}
-        </RecommendationText>
+        <RecommendationText>{recommendation.diet || "추천을 받으려면 버튼을 눌러주세요."}</RecommendationText>
       </RecommendationContainer>
       <RecommendationContainer>
         <RecommendationTitle>운동</RecommendationTitle>
-        <RecommendationText>
-          {recommendation.exercise || "추천을 받으려면 버튼을 눌러주세요."}
-        </RecommendationText>
+        <RecommendationText>{recommendation.exercise || "추천을 받으려면 버튼을 눌러주세요."}</RecommendationText>
       </RecommendationContainer>
     </RecommendContainer>
   );
 }
-
