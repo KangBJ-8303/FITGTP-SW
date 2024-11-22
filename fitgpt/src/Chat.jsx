@@ -7,7 +7,7 @@ const ChatContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px; /* 모바일 규격에 맞춘 너비 설정 */
+  max-width: 400px;
   height: 100%;
   margin: 0 auto;
   background-color: #f7f7f7;
@@ -43,9 +43,9 @@ const InputArea = styled.div`
   background-color: #ffffff;
   border-top: 1px solid #ddd;
   width: 100%;
-  max-width: 400px; 
+  max-width: 400px;
   position: fixed;
-  bottom: 60px; /* 하단바 바로 위 */
+  bottom: 60px;
 `;
 
 const Input = styled.input`
@@ -79,28 +79,33 @@ function Chat() {
       setInput("");
 
       try {
-        // API 호출하여 AI 응답 받기
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        // POST 요청으로 메시지 전송
+        const postResponse = await fetch("http://127.0.0.1:8080/api/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer YOUR_OPENAI_API_KEY`  // 실제 API 키를 여기에 넣어야 합니다
           },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",  // OpenAI 모델 선택
-            messages: [{ role: "user", content: input }],
-          }),
+          body: JSON.stringify({ prompt: input }),
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP 오류! 상태: ${response.status}`);
+        if (!postResponse.ok) {
+          throw new Error(`POST 요청 실패: 상태 ${postResponse.status}`);
         }
 
-        const data = await response.json();
-        const aiMessage = { text: data.choices[0].message.content, isSender: false };
+        // GET 요청으로 응답 받기
+        const getResponse = await fetch(
+          `http://127.0.0.1:8080/api/chat?prompt=${encodeURIComponent(input)}`
+        );
+
+        if (!getResponse.ok) {
+          throw new Error(`GET 요청 실패: 상태 ${getResponse.status}`);
+        }
+
+        const data = await getResponse.json();
+        const aiMessage = { text: data.content, isSender: false };
         setMessages((prevMessages) => [...prevMessages, aiMessage]);
       } catch (error) {
-        console.error("메시지 전송 오류:", error);
+        console.error("메시지 처리 중 오류:", error);
       }
     }
   };
@@ -128,3 +133,4 @@ function Chat() {
 }
 
 export default Chat;
+
