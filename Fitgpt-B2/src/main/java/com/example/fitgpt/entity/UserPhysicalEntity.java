@@ -19,6 +19,12 @@ public class UserPhysicalEntity {
     private UserEntity user;
 
     @Column
+    private String userEmail;
+
+    @Column
+    private String gender;
+
+    @Column
     private double height; // 키 (cm)
 
     @Column
@@ -28,8 +34,8 @@ public class UserPhysicalEntity {
     private int age; // 나이
 
     @Column
-    private double bodyFatPercentage; // 체지방률 (%)
+    private double bodyFat; // 체지방률 (%)
 
     @Column
-    private double skeletalMuscleMass; // 골격근량 (kg)
+    private double muscleMass; // 골격근량 (kg)
 }

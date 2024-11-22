@@ -1,11 +1,14 @@
 package com.example.fitgpt.controller;
 
 import com.example.fitgpt.dto.MemoDTO;
+import com.example.fitgpt.entity.MemoEntity;
 import com.example.fitgpt.service.MemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -16,23 +19,24 @@ public class MemoController {
     private MemoService memoService;
 
     // 특정 날짜의 메모를 조회
-    @GetMapping("/{userId}/{date}")
-    public ResponseEntity<MemoDTO> getMemoByDate(@PathVariable Long userId, @PathVariable String date) {
-        Optional<MemoDTO> memo = memoService.findMemoByUserIdAndDate(userId, date);
-        return memo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.ok(new MemoDTO()));
+    @GetMapping("/{userEmail}/{date}")
+    public ResponseEntity<String> getMemoContentByDate(@PathVariable String userEmail, @PathVariable String date) {
+        // 특정 이메일과 날짜로 메모 조회
+        Optional<MemoDTO> memo = memoService.findMemoByUserEmailAndDate(userEmail, date);
+
+        if (memo.isPresent()) {
+            return ResponseEntity.ok(memo.get().getContent());
+        }
+
+        // 메모가 없을 경우 기본 메시지 반환
+        return ResponseEntity.ok("내용을 입력해주세요.");
     }
+
 
     // 메모 저장
-    @PostMapping("/{userId}/{date}")
-    public ResponseEntity<MemoDTO> saveMemo(@PathVariable Long userId, @PathVariable String date, @RequestBody MemoDTO memoDTO) {
-        MemoDTO savedMemo = memoService.saveMemo(userId, date, memoDTO);
+    @PostMapping("/{userEmail}/{date}")
+    public ResponseEntity<MemoDTO> saveMemo(@RequestBody MemoDTO memoDTO) {
+        MemoDTO savedMemo = memoService.saveMemo(memoDTO.getUserEmail(), memoDTO.getDate(), memoDTO);
         return ResponseEntity.ok(savedMemo);
-    }
-
-    // 메모 업데이트
-    @PutMapping("/{userId}/{date}")
-    public ResponseEntity<MemoDTO> updateMemo(@PathVariable Long userId, @PathVariable String date, @RequestBody MemoDTO memoDTO) {
-        MemoDTO updatedMemo = memoService.updateMemo(userId, date, memoDTO);
-        return ResponseEntity.ok(updatedMemo);
     }
 }

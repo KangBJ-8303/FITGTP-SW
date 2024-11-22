@@ -15,8 +15,8 @@ public class UserPhysicalService {
     private UserPhysicalRepository userPhysicalRepository;
 
     // 특정 userId로 신체 정보 조회
-    public UserPhysicalDTO getUserPhysicalInfo(Long userId) {
-        Optional<UserPhysicalEntity> physicalInfoEntity = userPhysicalRepository.findByUserId(userId);
+    public UserPhysicalDTO getUserPhysicalInfo(String userEmail) {
+        Optional<UserPhysicalEntity> physicalInfoEntity = userPhysicalRepository.findByUserEmail(userEmail);
         return physicalInfoEntity.map(UserPhysicalDTO::toDTO).orElse(null); // 존재할 경우 DTO로 변환하여 반환
     }
 

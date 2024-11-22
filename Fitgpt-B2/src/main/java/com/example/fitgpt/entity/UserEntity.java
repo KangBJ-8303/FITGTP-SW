@@ -28,6 +28,7 @@ public class UserEntity {
 
     public static UserEntity toUserEntity(UserDTO userDTO){
         UserEntity userEntity = new UserEntity();
+        userEntity.setId(userDTO.getId());
         userEntity.setUserEmail(userDTO.getUserEmail());
         userEntity.setUserName(userDTO.getUserName());
         userEntity.setUserPassword(userDTO.getUserPassword());
@@ -42,5 +43,4 @@ public class UserEntity {
         userEntity.setUserPassword(userDTO.getUserPassword());
         return userEntity;
     }
-
 }

@@ -13,14 +13,14 @@ import lombok.ToString;
 public class MemoDTO {
 
     private Long id;
-    private Long userId;
+    private String userEmail;
     private String date;
     private String content;
 
     public static MemoDTO toMemoDTO(MemoEntity memoEntity) {
         MemoDTO memoDTO = new MemoDTO();
         memoDTO.setId(memoEntity.getId());
-        memoDTO.setUserId(memoEntity.getUserId());
+        memoDTO.setUserEmail(memoEntity.getUserEmail());
         memoDTO.setDate(memoEntity.getDate());
         memoDTO.setContent(memoEntity.getContent());
         return memoDTO;

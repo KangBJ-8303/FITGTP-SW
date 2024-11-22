@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface MemoRepository extends JpaRepository<MemoEntity, Long> {
-    Optional<MemoEntity> findByUserIdAndDate(Long userId, String date);
-    List<MemoEntity> findByUserIdAndDateBetween(Long userId, String startDate, String endDate);
+    Optional<MemoEntity> findByUserEmailAndDate(String userEmail, String date);
+    List<MemoEntity> findByUserEmailAndDateBetween(String userEmail, String startDate, String endDate);
 }

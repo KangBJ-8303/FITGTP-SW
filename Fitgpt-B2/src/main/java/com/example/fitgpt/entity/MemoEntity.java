@@ -16,7 +16,7 @@ public class MemoEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private String userEmail;
 
     @Column(nullable = false)
     private String date;
@@ -26,7 +26,7 @@ public class MemoEntity {
 
     public static MemoEntity toMemoEntity(MemoDTO memoDTO) {
         MemoEntity memoEntity = new MemoEntity();
-        memoEntity.setUserId(memoDTO.getUserId());
+        memoEntity.setUserEmail(memoDTO.getUserEmail());
         memoEntity.setDate(memoDTO.getDate());
         memoEntity.setContent(memoDTO.getContent());
         return memoEntity;
@@ -34,8 +34,7 @@ public class MemoEntity {
 
     public static MemoEntity toUpdateMemoEntity(MemoDTO memoDTO) {
         MemoEntity memoEntity = new MemoEntity();
-        memoEntity.setId(memoDTO.getUserId());
-        memoEntity.setUserId(memoDTO.getUserId());
+        memoEntity.setUserEmail(memoDTO.getUserEmail());
         memoEntity.setDate(memoDTO.getDate());
         memoEntity.setContent(memoDTO.getContent());
         return memoEntity;

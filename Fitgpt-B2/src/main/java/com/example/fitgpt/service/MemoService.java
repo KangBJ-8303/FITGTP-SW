@@ -14,24 +14,30 @@ public class MemoService {
     @Autowired
     private MemoRepository memoRepository;
 
-    public Optional<MemoDTO> findMemoByUserIdAndDate(Long userId, String date) {
-        return memoRepository.findByUserIdAndDate(userId, date)
+    public Optional<MemoDTO> findMemoByUserEmailAndDate(String userEmail, String date) {
+        return memoRepository.findByUserEmailAndDate(userEmail, date)
                 .map(MemoDTO::toMemoDTO);
     }
 
-    public MemoDTO saveMemo(Long userId, String date, MemoDTO memoDTO) {
-        MemoEntity memoEntity = MemoEntity.toMemoEntity(memoDTO);
-        memoEntity.setUserId(userId);
-        memoEntity.setDate(date);
+    public MemoDTO saveMemo(String userEmail, String date, MemoDTO memoDTO) {
+        // 현재 이메일과 날짜에 해당하는 메모를 조회
+        Optional<MemoEntity> existingMemo = memoRepository.findByUserEmailAndDate(userEmail, date);
+
+        MemoEntity memoEntity;
+        if (existingMemo.isPresent()) {
+            // 데이터가 존재하면 기존 엔티티를 업데이트
+            memoEntity = existingMemo.get();
+            memoEntity.setContent(memoDTO.getContent());
+        } else {
+            // 데이터가 없으면 새로운 엔티티 생성
+            memoEntity = MemoEntity.toMemoEntity(memoDTO);
+            memoEntity.setUserEmail(userEmail);
+            memoEntity.setDate(date);
+        }
+
+        // 저장 후 DTO로 변환하여 반환
         MemoEntity savedEntity = memoRepository.save(memoEntity);
         return MemoDTO.toMemoDTO(savedEntity);
     }
 
-    public MemoDTO updateMemo(Long userId, String date, MemoDTO memoDTO) {
-        MemoEntity memoEntity = MemoEntity.toUpdateMemoEntity(memoDTO); // 업데이트용 MemoEntity 생성
-        memoEntity.setUserId(userId);
-        memoEntity.setDate(date);
-        MemoEntity updatedEntity = memoRepository.save(memoEntity);
-        return MemoDTO.toMemoDTO(updatedEntity); // 업데이트된 MemoEntity를 MemoDTO로 변환하여 반환
-    }
 }
