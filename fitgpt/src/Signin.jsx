@@ -61,7 +61,7 @@ function Signin() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userEmail, password }),
+        body: JSON.stringify({ userEmail, userPassword }),
       });
 
       if (response.ok) {
