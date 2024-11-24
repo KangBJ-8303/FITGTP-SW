@@ -1,3 +1,4 @@
+// Chat.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -7,7 +8,7 @@ const ChatContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px;
+  max-width: 400px; /* 모바일 규격에 맞춘 너비 설정 */
   height: 100%;
   margin: 0 auto;
   background-color: #f7f7f7;
@@ -43,9 +44,9 @@ const InputArea = styled.div`
   background-color: #ffffff;
   border-top: 1px solid #ddd;
   width: 100%;
-  max-width: 400px;
+  max-width: 400px; 
   position: fixed;
-  bottom: 60px;
+  bottom: 60px; /* 하단바 바로 위 */
 `;
 
 const Input = styled.input`
@@ -73,35 +74,20 @@ function Chat() {
 
   const handleSend = async () => {
     if (input.trim()) {
-      // 사용자 메시지 전송
       const userMessage = { text: input, isSender: true };
       setMessages([...messages, userMessage]);
       setInput("");
 
       try {
-        // POST 요청으로 메시지 전송
-        const postResponse = await fetch("http://127.0.0.1:8080/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: input }),
-        });
-
-        if (!postResponse.ok) {
-          throw new Error(`POST 요청 실패: 상태 ${postResponse.status}`);
-        }
-
-        // GET 요청으로 응답 받기
-        const getResponse = await fetch(
-          `http://127.0.0.1:8080/api/chat?prompt=${encodeURIComponent(input)}`
+        const response = await fetch(
+          `http://54.180.138.98:8080/api/bot/chat?prompt=${encodeURIComponent(input)}`
         );
 
-        if (!getResponse.ok) {
-          throw new Error(`GET 요청 실패: 상태 ${getResponse.status}`);
+        if (!response.ok) {
+          throw new Error(`요청 실패: 상태 ${response.status}`);
         }
 
-        const data = await getResponse.json();
+        const data = await response.json();
         const aiMessage = { text: data.content, isSender: false };
         setMessages((prevMessages) => [...prevMessages, aiMessage]);
       } catch (error) {
@@ -133,4 +119,5 @@ function Chat() {
 }
 
 export default Chat;
+
 
