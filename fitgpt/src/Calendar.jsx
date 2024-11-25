@@ -166,7 +166,7 @@ function Calendar() {
     setErrorMessage('');
     try {
       const formattedDate = formatDate(new Date(selectedDate));
-      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${formattedDate}`);
+      const response = await fetch(`http://54.180.138.98:8080/api/memos/${userEmail}/${formattedDate}`);
       
       if (response.ok) {
         const content = await response.text(); // JSON 대신 단순 문자열로 받음
