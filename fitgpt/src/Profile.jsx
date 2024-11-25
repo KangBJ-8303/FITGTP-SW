@@ -127,7 +127,7 @@ function Profile() {
     const { name, height, weight, age } = userData;
 
     try {
-      const response = await fetch('http://localhost:8080/api/user/update', {
+      const response = await fetch('http://54.180.138.98:8080/api/user/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
