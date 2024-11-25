@@ -67,8 +67,7 @@ function Signup() {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/user/register', {
-
+      const response = await axios.post('http://54.180.138.98:8080/api/user/register', {
         ...info,
       });
       if (response.status === 200) {
@@ -76,10 +75,15 @@ function Signup() {
         navigate("/signin"); // 회원가입 성공 시 로그인 페이지로 이동
       }
     } catch (error) {
-      console.error("회원가입 실패:", error);
-      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      console.error("회원가입 실패:", error.response || error);
+      if (error.response) {
+        alert(`회원가입 실패: ${error.response.data.message || "알 수 없는 오류"}`);
+      } else {
+        alert("회원가입에 실패했습니다. 네트워크 상태를 확인해주세요.");
+      }
     }
   };
+  
 
   return (
     <Container>
@@ -153,3 +157,4 @@ function Signup() {
 }
 
 export default Signup;
+
