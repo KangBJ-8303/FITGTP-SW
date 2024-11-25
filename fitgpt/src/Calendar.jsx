@@ -195,7 +195,7 @@ function Calendar() {
     setErrorMessage('');
     try {
       const formattedDate = formatDate(new Date(selectedDate));
-      const response = await fetch(`http://localhost:8080/api/memos/${userEmail}/${formattedDate}`, {
+      const response = await fetch(`http://54.180.138.98:8080/api/memos/${userEmail}/${formattedDate}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
