@@ -66,7 +66,7 @@ function Signin() {
 
       if (response.ok) {
         const data = await response.json();
-        setUserEmail(userEmail); // 로그인 성공 시 Recoil 상태에 userEmail 저장
+        setEmail(userEmail); // 로그인 성공 시 Recoil 상태에 userEmail 저장
         navigate('/'); // 로그인 후 캘린더 페이지로 이동
       } else {
         throw new Error('로그인 실패');
