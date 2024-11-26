@@ -52,7 +52,7 @@ function Signin() {
   const navigate = useNavigate();
   const setUserEmail = useSetRecoilState(userEmailState); // Recoil 상태 업데이트용 훅
   const [userEmail, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [userPassword, setPassword] = useState('');
 
   const handleSignin = async () => {
     try {
