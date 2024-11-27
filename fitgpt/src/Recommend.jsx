@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useRecoilValue } from 'recoil';
+import { userEmailState } from './atoms';
 
 const RecommendContainer = styled.div`
   display: flex;
@@ -65,11 +67,11 @@ export default function Recommend() {
   });
 
   // Replace with the actual user ID you want to use
-  const userEmail = "";
+  const userEmail = useRecoilValue(userEmailState);
 
   const getPersonalizedRecommendations = async () => {
     try {
-      const response = await fetch(`http://54.180.138.98:8080/api/recommendations/${userEmail}`);
+      const response = await fetch(`http://localhost:8080/api/recommendations/${userEmail}`);
       if (!response.ok) {
         throw new Error("Failed to fetch recommendations");
       }
@@ -115,3 +117,4 @@ export default function Recommend() {
     </RecommendContainer>
   );
 }
+
