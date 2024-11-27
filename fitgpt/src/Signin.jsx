@@ -56,7 +56,7 @@ function Signin() {
 
   const handleSignin = async () => {
     try {
-      const response = await fetch('http://54.180.138.98:8080/api/user/login', {
+      const response = await fetch('http://localhost:8080/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ function Signin() {
 
       if (response.ok) {
         const data = await response.json();
-        setEmail(userEmail); // 로그인 성공 시 Recoil 상태에 userEmail 저장
+        setUserEmail(userEmail); // 로그인 성공 시 Recoil 상태에 userEmail 저장
         navigate('/'); // 로그인 후 캘린더 페이지로 이동
       } else {
         throw new Error('로그인 실패');
@@ -89,7 +89,7 @@ function Signin() {
       <Input
         type="password"
         placeholder="비밀번호"
-        value={password}
+        value={userPassword}
         onChange={(e) => setPassword(e.target.value)}
       />
       <SigninButton onClick={handleSignin}>로그인</SigninButton>
