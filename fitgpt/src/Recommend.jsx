@@ -71,7 +71,7 @@ export default function Recommend() {
 
   const getPersonalizedRecommendations = async () => {
     try {
-      const response = await fetch(`http://54.180.138.98:8080/api/recommendations/${userEmail}`);
+      const response = await fetch(`https://54.180.138.98:443/api/recommendations/${userEmail}`);
       if (!response.ok) {
         throw new Error("Failed to fetch recommendations");
       }

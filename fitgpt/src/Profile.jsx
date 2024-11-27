@@ -98,7 +98,7 @@ function Profile() {
     }
 
     try {
-      const response = await fetch(`http://54.180.138.98:8080/api/profiles/${userEmail}`);
+      const response = await fetch(`https://54.180.138.98:443/api/profiles/${userEmail}`);
       if (!response.ok) {
         throw new Error('서버 응답에 문제가 있습니다.');
       }

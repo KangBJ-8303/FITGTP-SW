@@ -80,7 +80,7 @@ function Chat() {
 
       try {
         const response = await fetch(
-          `http://54.180.138.98:8080/api/bot/chat?prompt=${encodeURIComponent(input)}`
+          `https://54.180.138.98:443/api/bot/chat?prompt=${encodeURIComponent(input)}`
         );
 
         if (!response.ok) {

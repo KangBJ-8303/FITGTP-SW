@@ -166,7 +166,7 @@ function Calendar() {
     setErrorMessage('');
     try {
       const formattedDate = formatDate(new Date(selectedDate));
-      const response = await fetch(`http://54.180.138.98:8080/api/memos/${userEmail}/${formattedDate}`);
+      const response = await fetch(`https://54.180.138.98:443/api/memos/${userEmail}/${formattedDate}`);
       
       if (response.ok) {
         const content = await response.text(); // JSON 대신 단순 문자열로 받음
@@ -195,7 +195,7 @@ function Calendar() {
     setErrorMessage('');
     try {
       const formattedDate = formatDate(new Date(selectedDate));
-      const response = await fetch(`http://54.180.138.98:8080/api/memos/${userEmail}/${formattedDate}`, {
+      const response = await fetch(`https://54.180.138.98:443/api/memos/${userEmail}/${formattedDate}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
