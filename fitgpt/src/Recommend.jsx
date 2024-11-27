@@ -65,7 +65,7 @@ export default function Recommend() {
   });
 
   // Replace with the actual user ID you want to use
-  const userId = "user123";
+  const userEmail = "";
 
   const getPersonalizedRecommendations = async () => {
     try {
