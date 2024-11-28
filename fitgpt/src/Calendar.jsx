@@ -202,6 +202,7 @@ export default function Calendar() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            userEmail: userEmail,
             date: formattedDate,
             content: noteText,
           }),
