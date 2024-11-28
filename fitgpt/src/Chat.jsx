@@ -1,4 +1,3 @@
-// Chat.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -8,7 +7,7 @@ const ChatContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px; /* 모바일 규격에 맞춘 너비 설정 */
+  max-width: 400px;
   height: 100%;
   margin: 0 auto;
   background-color: #f7f7f7;
@@ -25,10 +24,23 @@ const MessageList = styled.div`
   flex-direction: column;
 `;
 
+const MessageWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  margin: 0.3rem 0;
+  ${({ isSender }) => (isSender ? "flex-direction: row-reverse;" : "flex-direction: row;")}
+`;
+
+const ProfileImage = styled.img`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 0.5rem;
+`;
+
 const Message = styled.div`
   max-width: 60%;
   padding: 0.3rem 0.6rem;
-  margin: 0.3rem;
   font-size: 0.9rem;
   color: ${({ isSender }) => (isSender ? "white" : "black")};
   background-color: ${({ isSender }) => (isSender ? "#3f51b5" : "#e0e0e0")};
@@ -44,9 +56,9 @@ const InputArea = styled.div`
   background-color: #ffffff;
   border-top: 1px solid #ddd;
   width: 100%;
-  max-width: 400px; 
+  max-width: 400px;
   position: fixed;
-  bottom: 60px; /* 하단바 바로 위 */
+  bottom: 60px;
 `;
 
 const Input = styled.input`
@@ -100,9 +112,13 @@ function Chat() {
     <ChatContainer>
       <MessageList>
         {messages.map((msg, index) => (
-          <Message key={index} isSender={msg.isSender}>
-            {msg.text}
-          </Message>
+          <MessageWrapper key={index} isSender={msg.isSender}>
+            <ProfileImage
+              src={msg.isSender ? "/images/user.jpeg" : "/images/trainer.png"}
+              alt={msg.isSender ? "My Profile" : "AI Profile"}
+            />
+            <Message isSender={msg.isSender}>{msg.text}</Message>
+          </MessageWrapper>
         ))}
       </MessageList>
       <InputArea>
