@@ -67,7 +67,7 @@ function Signup() {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('https://54.180.138.98:443/api/user/register', {
+      const response = await axios.post('http://54.180.138.98:443/api/user/register', {
         ...info,
       });
       if (response.status === 200) {
@@ -157,4 +157,6 @@ function Signup() {
 }
 
 export default Signup;
+
+
 
