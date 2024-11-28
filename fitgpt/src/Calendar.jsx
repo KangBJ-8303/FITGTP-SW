@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { userEmailState } from './atoms';
 
 const CalendarContainer = styled.div`
   display: flex;
@@ -116,7 +118,6 @@ const CloseButton = styled.button`
   color: #888;
   cursor: pointer;
 `;
-
 const SaveButton = styled.button`
   margin: 1rem auto; /* 세로 여백과 수평 가운데 정렬 */
   display: block; /* 수평 가운데 정렬을 위해 block으로 설정 */
@@ -133,115 +134,178 @@ const SaveButton = styled.button`
 `;
 
 
+const FeedbackMessage = styled.div`
+  color: #d9534f;
+  margin-top: 1rem;
+  text-align: center;
+`;
+
+
 export default function Calendar() {
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [notes, setNotes] = useState({});
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [noteText, setNoteText] = useState('');
-
-  useEffect(() => {
-    setCurrentMonth(new Date());
-  }, []);
-
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-    setNoteText('');  // Clear input for new entries
-    setModalVisible(true);
-
-    if (notes[date]) {
-      setNoteText(notes[date].join('\n'));  // Load existing notes
-    }
-  };
-
-  const handleNoteChange = (e) => {
-    setNoteText(e.target.value);
-  };
-
-  const saveNote = () => {
-    setNotes((prevNotes) => ({
-      ...prevNotes,
-      [selectedDate]: noteText.split('\n').filter(note => note.trim() !== '') // Save each line as a note
-    }));
-    setModalVisible(false);
-  };
-
-  const getDaysInMonth = (year, month) => {
-    const days = [];
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstDay; i++) {
-      days.push(null);
-    }
-
-    for (let i = 1; i <= lastDate; i++) {
-      days.push(new Date(year, month, i));
-    }
-
-    return days;
-  };
-
-  const renderCalendar = () => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const days = getDaysInMonth(year, month);
-    const today = new Date().toDateString();
-
-    return days.map((date, index) =>
-      date ? (
-        <Day
-          key={index}
-          onClick={() => handleDateClick(date.toDateString())}
-          isSelected={selectedDate === date.toDateString()}
-          isToday={date.toDateString() === today}
-          hasNotes={Boolean(notes[date.toDateString()])}
-        >
-          {date.getDate()}
-        </Day>
-      ) : (
-        <EmptyDay key={index} />
-      )
+  const userEmail = useRecoilValue(userEmailState);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [notes, setNotes] = useState({});
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [noteText, setNoteText] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+  
+    const today = new Date();
+  
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+  
+    useEffect(() => {
+      if (selectedDate) {
+        fetchMemoData();
+      }
+    }, [selectedDate]);
+  
+    const fetchMemoData = async () => {
+      setLoading(true);
+      setErrorMessage('');
+      try {
+        const formattedDate = formatDate(new Date(selectedDate));
+        const response = await fetch(`http://54.180.138.98:443/api/memos/${userEmail}/${formattedDate}`);
+        console.log(`Formatted Date: ${formattedDate}`);
+  
+        if (response.ok) {
+          const content = await response.text();
+          setNoteText(content);
+          setNotes((prevNotes) => ({
+            ...prevNotes,
+            [formattedDate]: content,
+          }));
+        } else {
+          throw new Error('메모를 가져오는 중 오류가 발생했습니다.');
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorMessage('메모를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    const saveNote = async () => {
+      setErrorMessage('');
+      try {
+        const formattedDate = formatDate(new Date(selectedDate));
+        const response = await fetch(`http://54.180.138.98:443/api/memos/${userEmail}/${formattedDate}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            date: formattedDate,
+            content: noteText,
+          }),
+        });
+  
+        if (response.ok) {
+          setNotes((prevNotes) => ({
+            ...prevNotes,
+            [formattedDate]: noteText,
+          }));
+          alert('메모가 저장되었습니다.');
+          setModalVisible(false);
+        } else {
+          throw new Error('메모 저장 실패');
+        }
+      } catch (error) {
+        console.error('메모 저장 오류:', error);
+        setErrorMessage('메모를 저장하는 중 오류가 발생했습니다.');
+      }
+    };
+  
+    const handleDateClick = (date) => {
+      setSelectedDate(date);
+      setModalVisible(true);
+      setNoteText(notes[date] || '');
+    };
+  
+    const getDaysInMonth = (year, month) => {
+      const days = [];
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+  
+      for (let i = 0; i < firstDay; i++) {
+        days.push(null);
+      }
+  
+      for (let i = 1; i <= lastDate; i++) {
+        days.push(new Date(year, month, i));
+      }
+  
+      return days;
+    };
+  
+    const renderCalendar = () => {
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const days = getDaysInMonth(year, month);
+  
+      return days.map((date, index) =>
+        date ? (
+          <Day
+            key={index}
+            onClick={() => handleDateClick(date.toDateString())}
+            isSelected={selectedDate === date.toDateString()}
+            isToday={date.toDateString() === today.toDateString()}
+            hasNotes={Boolean(notes[date.toDateString()])}
+          >
+            {date.getDate()}
+          </Day>
+        ) : (
+          <EmptyDay key={index} />
+        )
+      );
+    };
+  
+    const handlePreviousMonth = () => {
+      setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+    };
+  
+    const handleNextMonth = () => {
+      setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+    };
+  
+    return (
+      <CalendarContainer>
+        <NavigationButtons>
+          <Button onClick={handlePreviousMonth}>&lt;</Button>
+          <Title>
+            {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
+          </Title>
+          <Button onClick={handleNextMonth}>&gt;</Button>
+        </NavigationButtons>
+        <DaysGrid>
+          {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
+            <DayBox key={day}>{day}</DayBox>
+          ))}
+          {renderCalendar()}
+        </DaysGrid>
+  
+        {isModalVisible && (
+          <Modal isVisible={isModalVisible}>
+            <CloseButton onClick={() => setModalVisible(false)}>&times;</CloseButton>
+            <NoteTitle>운동, 식단 기록하기</NoteTitle>
+            <NoteInput
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="운동이나 식단을 작성해주세요"
+            />
+            {loading && <div>로딩 중</div>}
+            {errorMessage && <div>{errorMessage}</div>}
+            <SaveButton onClick={saveNote}>저장</SaveButton>
+          </Modal>
+        )}
+      </CalendarContainer>
     );
-  };
-
-  const handlePreviousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-  };
-
-  return (
-    <CalendarContainer>
-      <NavigationButtons>
-        <Button onClick={handlePreviousMonth}>&lt;</Button>
-        <Title>
-          {currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월
-        </Title>
-        <Button onClick={handleNextMonth}>&gt;</Button>
-      </NavigationButtons>
-      <DaysGrid>
-        {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-          <DayBox key={day}>{day}</DayBox>
-        ))}
-        {renderCalendar()}
-      </DaysGrid>
-
-      {isModalVisible && (
-        <Modal isVisible={isModalVisible}>
-          <CloseButton onClick={() => setModalVisible(false)}>&times;</CloseButton>
-          <NoteTitle>운동, 식단 기록하기</NoteTitle>
-          <NoteInput
-            value={noteText}
-            onChange={handleNoteChange}
-            placeholder="운동이나 식단을 작성해주세요"
-          />
-          <SaveButton onClick={saveNote}>저장</SaveButton>
-        </Modal>
-      )}
-    </CalendarContainer>
-  );
-}
-
+  }
+  
