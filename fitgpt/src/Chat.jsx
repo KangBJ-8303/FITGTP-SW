@@ -12,7 +12,7 @@ const ChatContainer = styled.div`
   margin: 0 auto;
   background-color: #f7f7f7;
   font-family: 'Noto Sans KR', sans-serif;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 const MessageList = styled.div`
@@ -22,6 +22,7 @@ const MessageList = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin-bottom: 3rem;
 `;
 
 const MessageWrapper = styled.div`
@@ -135,5 +136,7 @@ function Chat() {
 }
 
 export default Chat;
+
+
 
 
