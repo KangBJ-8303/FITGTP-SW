@@ -86,6 +86,8 @@ function Profile() {
     height: '',
     weight: '',
     age: '',
+    bodyFat:'',
+    muscleMass:'',
     memo: [], // 운동 기록 데이터
     evaluation: '', // ChatGPT의 평가 데이터
   });
@@ -108,6 +110,8 @@ function Profile() {
         height: data.height || '',
         weight: data.weight || '',
         age: data.age || '',
+        bodyFat: data.bodyFat ||'',
+        muscleMass:data.muscleMass ||'',
         memo: data.workoutRecord || [], // 운동 기록 초기화
         evaluation: data.evaluation || '', // ChatGPT 평가 데이터
       });
@@ -124,7 +128,7 @@ function Profile() {
       return;
     }
 
-    const { name, height, weight, age } = userData;
+    const { name, height, weight, age,bodyFat,muscleMass  } = userData;
 
     try {
       const response = await fetch('http://54.180.138.98:443/api/user/update', {
@@ -138,6 +142,8 @@ function Profile() {
           height,
           weight,
           age,
+          bodyFat,
+          muscleMass,
         }),
       });
 
@@ -224,6 +230,7 @@ function Profile() {
 }
 
 export default Profile;
+
 
 
 
