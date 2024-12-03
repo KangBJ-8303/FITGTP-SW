@@ -82,7 +82,10 @@ const SendButton = styled.button`
 `;
 
 function Chat() {
-  const [messages, setMessages] = useState([]);
+  const location = useLocation(); // Navigate로 전달된 state를 받음
+  const initialMessages = location.state?.initialMessages || []; // 초기 메시지
+  
+  const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
 
   const handleSend = async () => {
@@ -127,7 +130,7 @@ function Chat() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="이렇게 말해보세요: 하체운동 어떤 게 좋아?"
+          placeholder="질문을 입력하세요"
         />
         <SendButton onClick={handleSend}>전송</SendButton>
       </InputArea>
@@ -135,7 +138,11 @@ function Chat() {
   );
 }
 
+
 export default Chat;
+
+
+
 
 
 
