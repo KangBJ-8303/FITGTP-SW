@@ -127,7 +127,7 @@ function Profile() {
     const { name, height, weight, age } = userData;
 
     try {
-      const response = await fetch('http://54.180.138.98:8080/api/user/update', {
+      const response = await fetch('http://54.180.138.98:443/api/user/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -199,6 +199,14 @@ function Profile() {
             onChange={(e) => handleInputChange(e, 'age')}
           />
         </InfoItem>
+        <InfoItem>
+          <Label>체지방률(%):</Label>
+          <Value type="number" value={userData.bodyFat} onChange={(e) => handleInputChange(e, 'bodyFat')}/>
+        </InfoItem>
+        <InfoItem>
+          <Label>골격근량(kg):</Label>
+          <Value type="number" value={userData.muscleMass} onChange={(e) => handleInputChange(e, 'muscleMass')}/>
+        </InfoItem>
       </InfoContainer>
       <SaveButton onClick={updateUserInfo}>정보 수정 저장</SaveButton>
       <SummaryText>
@@ -216,6 +224,7 @@ function Profile() {
 }
 
 export default Profile;
+
 
 
 
