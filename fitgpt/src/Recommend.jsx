@@ -142,14 +142,27 @@ export default function Recommend() {
         <RecommendationTitle>운동</RecommendationTitle>
         <RecommendationText>{recommendation.exercise || "추천을 받으려면 버튼을 눌러주세요."}</RecommendationText>
       </RecommendationContainer>
-      <MoreInfoButton onClick={() => navigate('/Chat', {
-        state: {
-          initialMessages: [
-            { text: `오늘의 추천 식단: ${recommendation.diet}`, isSender: true },
-            { text: `오늘의 추천 운동: ${recommendation.exercise}`, isSender: true }
-          ]
-        }
-      })}>  자세하게 궁금해!</MoreInfoButton>
+      <MoreInfoButton
+  onClick={() =>
+    navigate('/Chat', {
+      state: {
+        initialMessages: [
+          {
+            text: `오늘의 추천은 다음과 같습니다:\n\n식단: ${recommendation.diet}\n운동: ${recommendation.exercise}`,
+            isSender: true,
+          },
+          {
+            text: "추천을 참고하시고 어떤 점이 궁금하신지 알려주세요!",
+            isSender: false,
+          },
+        ],
+      },
+    })
+  }
+>
+  자세하게 궁금해!
+</MoreInfoButton>
+
 
     </RecommendContainer>
   );
