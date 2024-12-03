@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom"; // 추가된 부분
 
 const ChatContainer = styled.div`
   display: flex;
@@ -137,7 +138,6 @@ function Chat() {
     </ChatContainer>
   );
 }
-
 
 export default Chat;
 
