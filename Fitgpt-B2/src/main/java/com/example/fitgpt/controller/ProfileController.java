@@ -45,13 +45,12 @@ public class ProfileController {
 
         // 오늘과 전날의 메모 조회
         Optional<MemoDTO> todayMemo = memoService.findMemoByUserEmailAndDate(userEmail, today);
-        String todayContent = todayMemo.map(MemoDTO::getContent).orElse("");
+        String todayContent = today + ": " + todayMemo.map(MemoDTO::getContent).orElse("");
 
         Optional<MemoDTO> yesterdayMemo = memoService.findMemoByUserEmailAndDate(userEmail, yesterday);
-        String yesterdayContent = yesterdayMemo.map(MemoDTO::getContent).orElse("");
+        String yesterdayContent = yesterday + ": " + yesterdayMemo.map(MemoDTO::getContent).orElse("");
 
         String[] memo = {todayContent, yesterdayContent};
-        List<String> memoContents = Arrays.asList(todayContent, yesterdayContent);
 
         // 사용자 이름 및 신체 정보 조회
         UserEntity userEntity = userRepository.findByUserEmail(userEmail)
@@ -66,6 +65,8 @@ public class ProfileController {
         response.put("name", userEntity.getUserName());
         response.put("height", physicalInfo.getHeight());
         response.put("weight", physicalInfo.getWeight());
+        response.put("bodyFat", physicalInfo.getBodyFat());
+        response.put("muscleMass", physicalInfo.getMuscleMass());
         response.put("age", physicalInfo.getAge());
         response.put("workoutRecord", memo);
         response.put("evaluation", chatGptResponse);
